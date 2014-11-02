@@ -33,7 +33,7 @@ fn main() {
 
     let mut pi = 0.0_f64;
     let mut step = 1.0_f64;
-    for d in range_step_inclusive(1, n, 2) {
+    for d in range_step_inclusive(1, steps, 2) {
         pi += step / (d as f64);
         step = -step;
     }

@@ -26,7 +26,7 @@ fn main() {
              .expect("Invalid type, please specify an integer"))
         .unwrap_or(1000);
 
-    if matches.opt_present("h") || args.len() == 1 {
+    if matches.opt_present("h") {
         println!("{}", usage("A Pi decimal computer.", &opts));
         return;
     }

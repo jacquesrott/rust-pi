@@ -92,3 +92,28 @@ fn main() {
 
     println!("{}", f64::to_string(pi));
 }
+
+
+#[test]
+fn compute_returns_same_value_with_1_step() {
+    let one_thread = compute(1, 1);
+    let more_threads = compute(1, 2);
+
+    assert_eq!(one_thread, more_threads);
+}
+
+#[test]
+fn compute_returns_same_value_with_5_threads() {
+    let one_thread = compute(100, 1);
+    let more_threads = compute(100, 5);
+
+    assert_eq!(one_thread, more_threads);
+}
+
+#[test]
+fn compute_returns_same_value_with_8_threads() {
+    let one_thread = compute(100, 1);
+    let more_threads = compute(100, 8);
+
+    assert_eq!(one_thread, more_threads);
+}

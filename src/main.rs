@@ -67,7 +67,7 @@ fn main() {
 
     let steps = matches
         .opt_str("s")
-        .map(|d| from_str::<uint>(d[])
+        .map(|s| from_str::<uint>(s[])
              .expect("Invalid type, please specify an integer"))
         .unwrap_or(1000);
 

@@ -22,31 +22,40 @@ fn compute_n_steps(start: uint, end: uint) -> f64 {
     return pi;
 }
 
-fn compute(steps: uint) -> f64 {
+
+fn compute(steps: uint, threads: uint) -> f64 {
     let mut pi = 0.0_f64;
     let (sender, receiver): (Sender<f64>, Receiver<f64>) = channel();
-    let cpus = os::num_cpus();
-    let split_steps = steps / cpus;
+    let (threads, split_steps) = if steps > 1 {
+        (threads, steps / threads)
+    } else {
+        (1, steps)
+    };
 
-    for cpu in range(0, cpus) {
+    for thread in range(0, threads) {
         let child_sender = sender.clone();
-        let start = split_steps * cpu + 1;
+        let start = split_steps * thread + 1;
         let end = start + split_steps - 1;
 
         spawn(proc() {
             child_sender.send(compute_n_steps(start, end));
         });
     }
-    for _ in range(0, cpus) {
+
+    for _ in range(0, threads) {
         pi += receiver.recv();
     }
+
+    pi *= 4.0_f64;
     return pi;
 }
+
 
 fn main() {
     let args: Vec<String> = os::args();
     let opts = [
         optopt("s", "steps", "Number of steps to compute pi [default=1000]", "1000"),
+        optopt("c", "cpus", "Number of cpus to use for the computation", ""),
         optflag("o", "optimize", "Optimise the computation by using multicores"),
         optflag("h", "help", "print this help message and exit"),
     ];
@@ -67,14 +76,19 @@ fn main() {
         return;
     }
 
-    let optimise = matches.opt_present("o");
-
-    let mut pi = if optimise {
-        compute(steps)
+    let cpus = if matches.opt_present("c") {
+        matches
+            .opt_str("c")
+            .map(|c| from_str::<uint>(c[])
+                 .expect("Invalid type, please specify an integer"))
+            .unwrap_or(1)
+    } else if matches.opt_present("o") {
+        os::num_cpus()
     } else {
-        compute_n_steps(1, steps)
+        1
     };
 
-    pi *= 4.0_f64;
+    let pi = compute(steps, cpus);
+
     println!("{}", f64::to_string(pi));
 }

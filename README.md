@@ -17,6 +17,7 @@ The goal is not to be accurate but more to play around.
 ```
 Options:
     -s --steps 1000     Number of steps to compute pi [default=1000]
+    -c --cpus           Number of cpus to use for the computation
     -o --optimize       Optimise the computation by using multicores
     -h --help           print this help message and exit
 ```
